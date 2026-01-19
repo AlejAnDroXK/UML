@@ -1,0 +1,375 @@
+@startuml
+left to right direction
+
+' =========================
+' CAPAS DEL SISTEMA
+' =========================
+
+package "Capa Negocio" {
+
+    class GestorGranja {
+
+    - parcelas : ArrayList<Parcela>
+    - aspersoresInventario : ArrayList<Aspersor>
+    - sensoresInventario : ArrayList<SensorHumedad>
+    - gestorParcelas : GestorParcelas
+    - gestorAspersores : GestorAspersores
+    - gestorSensores : GestorSensores
+    - gestorCultivos : GestorCultivos
+    - gestorArduino : GestorArduino
+    - gestorUsuarios : GestorUsuarios
+    - contadorIdAspersores : int
+    - contadorIdSensores : int
+    - operacionesCrud : OperacionesCrud
+
+    + GestorGranja()
+    + setPersistenciaService(operacionesCrud : OperacionesCrud) : void
+    + getPersistenciaService() : OperacionesCrud
+    + getParcelas() : ArrayList<Parcela>
+    + setParcelas(parcelas : ArrayList<Parcela>) : void
+    + getAspersoresInventario() : ArrayList<Aspersor>
+    + setAspersoresInventario(aspersoresInventario : ArrayList<Aspersor>) : void
+    + getSensoresInventario() : ArrayList<SensorHumedad>
+    + setSensoresInventario(sensoresInventario : ArrayList<SensorHumedad>) : void
+    + getGestorParcelas() : GestorParcelas
+    + getGestorAspersores() : GestorAspersores
+    + getGestorSensores() : GestorSensores
+    + getGestorCultivos() : GestorCultivos
+    + getGestorArduino() : GestorArduino
+    + getGestorUsuarios() : GestorUsuarios
+    + getSiguienteIdAspersor() : String
+    + getSiguienteIdSensor() : String
+    + getContadorIdAspersores() : int
+    + incrementarContadorAspersores() : void
+    + getContadorIdSensores() : int
+    + incrementarContadorSensores() : void
+}
+
+
+    class GestorParcelas {
+
+    - gestorGranja : GestorGranja
+    - contadorParcelas : int
+    - operacionesCrud : OperacionesCrud
+
+    + GestorParcelas(gestorGranja : GestorGranja)
+    + setPersistenciaService(operacionesCrud : OperacionesCrud) : void
+    + crearParcelas(terrenoTotal : double) : void
+    - asignarDispositivosAutomaticamente() : void
+    + mostrarInformacionParcelas() : void
+    + eliminarParcela(idParcela : String) : void
+    + buscarParcela(idParcela : String) : Parcela
+}
+
+    class GestorAspersores {
+
+    - gestorGranja : GestorGranja
+    - operacionesCrud : OperacionesCrud
+
+    + GestorAspersores(gestorGranja : GestorGranja)
+    + setPersistenciaService(operacionesCrud : OperacionesCrud) : void
+    + agregarAspersoresInventario(cantidad : int) : void
+    + mostrarInformacionAspersores() : void
+    + asignarAspersorAParcela(idParcela : String) : void
+    + asignarAspersorEspecificoAParcela(idAspersor : String, idParcela : String) : void
+    + prenderManualmente(idAspersor : String) : void
+    + realizarRiegoAutomatico() : void
+    + conectarDesconectarAspersor(idAspersor : String) : void
+    + mostrarHistorialAspersor(idAspersor : String) : void
+    + eliminarAspersor(idAspersor : String) : void
+    + buscarAspersor(idAspersor : String) : Aspersor
+}
+    class GestorSensores {
+
+    - gestorGranja : GestorGranja
+    - operacionesCrud : OperacionesCrud
+
+    + GestorSensores(gestorGranja : GestorGranja)
+    + setPersistenciaService(operacionesCrud : OperacionesCrud) : void
+    + agregarSensoresInventario(cantidad : int) : void
+    + mostrarInformacionSensores() : void
+    + asignarSensorAParcela(idParcela : String) : void
+    + asignarSensorEspecificoAParcela(idSensor : String, idParcela : String) : void
+    + conectarDesconectarSensor(idSensor : String) : void
+    + simularLecturasTodasParcelas() : void
+    + mostrarLecturasSensor(idSensor : String) : void
+    + eliminarSensor(idSensor : String) : void
+    + buscarSensor(idSensor : String) : SensorHumedad
+}
+
+    class GestorCultivos {
+
+    - gestorGranja : GestorGranja
+    - cultivosDisponibles : ArrayList<Cultivo>
+    - operacionesCrud : OperacionesCrud
+
+    + GestorCultivos(gestorGranja : GestorGranja)
+    + setPersistenciaService(operacionesCrud : OperacionesCrud) : void
+    - inicializarCultivos() : void
+    + mostrarCultivosDisponibles() : void
+    + registrarCultivoEnParcela(idParcela : String, nombreCultivo : String) : void
+    + cambiarCultivoParcela(idParcela : String, nombreCultivo : String) : void
+    - buscarCultivo(nombre : String) : Cultivo
+    + getCultivosDisponibles() : ArrayList<Cultivo>
+}
+
+    class GestorUsuarios {
+
+    - gestorGranja : GestorGranja
+    - usuarios : ArrayList<Usuario>
+    - usuarioActual : Usuario
+    - contadorUsuarios : int
+    - operacionesCrud : OperacionesCrud
+
+    + GestorUsuarios(gestorGranja : GestorGranja)
+    + GestorUsuarios()
+    + setPersistenciaService(operacionesCrud : OperacionesCrud) : void
+    - cargarUsuariosDesdeDB() : void
+    - inicializarUsuariosPorDefecto() : void
+    + agregarUsuario(nombre : String, apellido : String, email : String, telefono : String, rol : String) : void
+    + seleccionarUsuarioActual(idUsuario : String) : void
+    + mostrarUsuarios() : void
+    + editarUsuario(idUsuario : String, nombre : String, apellido : String, email : String, telefono : String, rol : String) : void
+    + desactivarUsuario(idUsuario : String) : void
+    + activarUsuario(idUsuario : String) : void
+    + buscarUsuario(idUsuario : String) : Usuario
+    + getUsuarios() : ArrayList<Usuario>
+    + getUsuariosActivos() : ArrayList<Usuario>
+    + getUsuarioActual() : Usuario
+    + setUsuarioActual(usuarioActual : Usuario) : void
+    + cerrarSesion() : void
+}
+}
+
+package "Capa Modelo" {
+
+    class Usuario {
+
+    - id : String
+    - nombre : String
+    - apellido : String
+    - email : String
+    - telefono : String
+    - rol : String
+    - fechaRegistro : LocalDateTime
+    - activo : boolean
+
+    + Usuario(id : String, nombre : String, apellido : String, email : String, telefono : String, rol : String)
+    + getId() : String
+    + setId(id : String) : void
+    + getNombre() : String
+    + setNombre(nombre : String) : void
+    + getApellido() : String
+    + setApellido(apellido : String) : void
+    + getEmail() : String
+    + setEmail(email : String) : void
+    + getTelefono() : String
+    + setTelefono(telefono : String) : void
+    + getRol() : String
+    + setRol(rol : String) : void
+    + getFechaRegistro() : LocalDateTime
+    + setFechaRegistro(fechaRegistro : LocalDateTime) : void
+    + isActivo() : boolean
+    + setActivo(activo : boolean) : void
+    + getNombreCompleto() : String
+    + toString() : String
+}
+
+    class Parcela {
+
+    - id : String
+    - metrosCuadrados : double
+    - cultivo : Cultivo
+    - aspersores : ArrayList<Aspersor>
+    - sensores : ArrayList<SensorHumedad>
+    - usuarioCreador : Usuario
+    - fechaCreacion : LocalDateTime
+
+    + Parcela(id : String, metrosCuadrados : double)
+    + getId() : String
+    + setId(id : String) : void
+    + getMetrosCuadrados() : double
+    + setMetrosCuadrados(metrosCuadrados : double) : void
+    + getCultivo() : Cultivo
+    + setCultivo(cultivo : Cultivo) : void
+    + getAspersores() : ArrayList<Aspersor>
+    + setAspersores(aspersores : ArrayList<Aspersor>) : void
+    + getSensores() : ArrayList<SensorHumedad>
+    + setSensores(sensores : ArrayList<SensorHumedad>) : void
+    + getUsuarioCreador() : Usuario
+    + setUsuarioCreador(usuarioCreador : Usuario) : void
+    + getFechaCreacion() : LocalDateTime
+    + setFechaCreacion(fechaCreacion : LocalDateTime) : void
+    + agregarAspersor(aspersor : Aspersor) : void
+    + agregarSensor(sensor : SensorHumedad) : void
+    + removerAspersor(aspersor : Aspersor) : void
+    + removerSensor(sensor : SensorHumedad) : void
+    + toString() : String
+}
+
+    class Aspersor {
+
+    - id : String
+    - conectado : boolean
+    - encendido : boolean
+    - parcela : Parcela
+    - historialEncendidos : ArrayList<LocalDateTime>
+
+    + Aspersor(id : String)
+    + getId() : String
+    + setId(id : String) : void
+    + isConectado() : boolean
+    + setConectado(conectado : boolean) : void
+    + isEncendido() : boolean
+    + setEncendido(encendido : boolean) : void
+    + getParcela() : Parcela
+    + setParcela(parcela : Parcela) : void
+    + getHistorialEncendidos() : ArrayList<LocalDateTime>
+    + setHistorialEncendidos(historialEncendidos : ArrayList<LocalDateTime>) : void
+    + registrarEncendido() : void
+    + encender() : void
+    + apagar() : void
+    + toString() : String
+}
+    class SensorHumedad {
+
+    - id : String
+    - conectado : boolean
+    - humedadActual : int
+    - parcela : Parcela
+    - lecturas : ArrayList<LecturaHumedad>
+
+    + SensorHumedad(id : String)
+    + getId() : String
+    + setId(id : String) : void
+    + isConectado() : boolean
+    + setConectado(conectado : boolean) : void
+    + getHumedadActual() : int
+    + setHumedadActual(humedadActual : int) : void
+    + getParcela() : Parcela
+    + setParcela(parcela : Parcela) : void
+    + getLecturas() : ArrayList<LecturaHumedad>
+    + setLecturas(lecturas : ArrayList<LecturaHumedad>) : void
+    + realizarLectura() : void
+    + toString() : String
+}
+
+    class Cultivo {
+
+    - nombre : String
+    - humedadMinima : int
+    - humedadMaxima : int
+    - frecuenciaRiegoHoras : int
+
+    + Cultivo(nombre : String, humedadMinima : int, humedadMaxima : int, frecuenciaRiegoHoras : int)
+    + getNombre() : String
+    + setNombre(nombre : String) : void
+    + getHumedadMinima() : int
+    + setHumedadMinima(humedadMinima : int) : void
+    + getHumedadMaxima() : int
+    + setHumedadMaxima(humedadMaxima : int) : void
+    + getFrecuenciaRiegoHoras() : int
+    + setFrecuenciaRiegoHoras(frecuenciaRiegoHoras : int) : void
+    + toString() : String
+}
+
+    class LecturaHumedad {
+
+    - fecha : LocalDateTime
+    - porcentajeHumedad : int
+
+    + LecturaHumedad(fecha : LocalDateTime, porcentajeHumedad : int)
+    + getFecha() : LocalDateTime
+    + setFecha(fecha : LocalDateTime) : void
+    + getPorcentajeHumedad() : int
+    + setPorcentajeHumedad(porcentajeHumedad : int) : void
+    + toString() : String
+}
+}
+
+package "Capa Servicio / Persistencia" {
+
+    class OperacionesCrud {
+
+    - usuarioRepositorio : UsuarioRepositorio
+    - parcelaRepositorio : ParcelaRepositorio
+    - aspersorRepositorio : AspersorRepositorio
+    - sensorRepository : SensorHumedadRepositorio
+    - cultivoRepositorio : CultivoRepositorio
+    - lecturaRepository : LecturaHumedadRepositorio
+    - historialRepository : HistorialEncendidoRepositorio
+
+    + guardarUsuario(usuario : Usuario) : void
+    + cargarUsuarios() : List<Usuario>
+    + guardarParcela(parcela : Parcela, usuario : Usuario) : void
+    + eliminarParcela(idParcela : String) : void
+    + guardarAspersor(aspersor : Aspersor) : void
+    + eliminarAspersor(idAspersor : String) : void
+    + guardarSensor(sensor : SensorHumedad) : void
+    + eliminarSensor(idSensor : String) : void
+    + guardarLecturaHumedad(sensorId : String, lectura : LecturaHumedad) : void
+    + guardarHistorialEncendido(aspersorId : String, fecha : java.time.LocalDateTime) : void
+    + inicializarCultivos() : void
+    + actualizarCultivoParcela(idParcela : String, nombreCultivo : String) : void
+}
+}
+
+' =========================
+' RELACIONES PRINCIPALES
+' =========================
+
+GestorGranja *-- GestorParcelas
+GestorGranja *-- GestorAspersores
+GestorGranja *-- GestorSensores
+GestorGranja *-- GestorCultivos
+GestorGranja *-- GestorUsuarios
+
+GestorGranja o-- Parcela
+GestorGranja o-- Aspersor
+GestorGranja o-- SensorHumedad
+
+' =========================
+' RELACIONES DE MODELO
+' =========================
+
+Parcela o-- Aspersor
+Parcela o-- SensorHumedad
+Parcela --> Cultivo
+Parcela --> Usuario
+
+Aspersor --> Parcela
+SensorHumedad --> Parcela
+
+SensorHumedad o-- LecturaHumedad
+
+' =========================
+' NEGOCIO → MODELO
+' =========================
+
+GestorParcelas --> Parcela
+GestorAspersores --> Aspersor
+GestorSensores --> SensorHumedad
+GestorCultivos --> Cultivo
+GestorUsuarios --> Usuario
+
+' =========================
+' NEGOCIO → PERSISTENCIA
+' =========================
+
+GestorParcelas --> OperacionesCrud
+GestorAspersores --> OperacionesCrud
+GestorSensores --> OperacionesCrud
+GestorCultivos --> OperacionesCrud
+GestorUsuarios --> OperacionesCrud
+
+' =========================
+' PERSISTENCIA → MODELO
+' =========================
+
+OperacionesCrud --> Usuario
+OperacionesCrud --> Parcela
+OperacionesCrud --> Aspersor
+OperacionesCrud --> SensorHumedad
+OperacionesCrud --> Cultivo
+OperacionesCrud --> LecturaHumedad
+@enduml
