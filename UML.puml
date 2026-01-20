@@ -488,5 +488,4 @@ OperacionesCrud --> Aspersor
 OperacionesCrud --> SensorHumedad
 OperacionesCrud --> Cultivo
 OperacionesCrud --> LecturaHumedad
-
 @enduml
